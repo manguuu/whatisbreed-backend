@@ -1,0 +1,5 @@
+tensorflow==2.8.0
+lime @ file:///home/conda/feedstock_root/build_artifacts/lime_1593306000762/work
+matplotlib==3.5.1
+aiofiles==0.8.0
+numpy @ file:///private/var/folders/nz/j6p8yfhx1mv_0grj5xl4650h0000gp/T/abs_e99dd190-62ea-4b66-a328-d961062afa8ar4io6k3p/croots/recipe/numpy_and_numpy_base_1651563626935/work
