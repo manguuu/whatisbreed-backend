@@ -1,0 +1,9 @@
+#image-div {
+    display: flex;
+}
+
+.image {
+    width: 299px;
+    height: 299px;
+    object-fit: contain;
+}
