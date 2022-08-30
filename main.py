@@ -17,50 +17,46 @@ SERVER_IMG_DIR = os.path.join('http://localhost:8000/','static/','originImg/')
 STATIC_DIR = os.path.join(BASE_DIR, 'static')
 
 
-templates = Jinja2Templates(directory='static')
 app.mount('/static', StaticFiles(directory='static'), name='static')
-
 app = FastAPI()
 
-@app.get('/')
-def index(request: Request):
-    return templates.TemplateResponse('index.html', context={'request': request})
 
-# return: "[Date][random str].png"
+# return: "[Date][random str].png": str
 def get_filename() -> str:
     cur_time = datetime.now().strftime('%Y%m%d%H%M%S')
     filename = ''.join([cur_time, secrets.token_hex(16)]) + '.png'
     return filename
 
 @app.post('/files/')
-async def upload_file(file: UploadFile):
+async def post_file(file: UploadFile):
     filename = get_filename()
-    origin_file_path = os.path.join(ORIGIN_IMG_DIR, filename)
-    lime_file_path = os.path.join(LIME_IMG_DIR, filename)
+    filepath = os.path.join(ORIGIN_IMG_DIR, filename)
 
-    async with aiofiles.open(origin_file_path, 'wb+') as buffer:
+    async with aiofiles.open(filepath, 'wb+') as buffer:
         img = await file.read()
         await buffer.write(img)
-    
-    img = img_preprocess(origin_file_path)
+
+    return {'filename': filename}
+
+@app.get("/{filename}")
+async def predict(filename: str):
+    lime_file_path = os.path.join(LIME_IMG_DIR, filename)
+    filename = os.path.join(ORIGIN_IMG_DIR, filename)
+    img = img_preprocess(filename)
     pred = list(map(float, model.predict(img)[0]))
     pred = {label: prob for label, prob in zip(CLASSES, pred)}
     explain_image(img[0], lime_file_path)
+    print("limefilepath=", lime_file_path)
+    return {'pred': pred};
 
-    return {
-        'origin_file_path': os.path.join('/static/originImg', filename), 
-        'lime_file_path': os.path.join('/static/limeImg', filename),
-        'predict': pred}
+@app.get("/static/{filename}")
+async def get_static_file(filename: str):
+    return FileResponse(os.path.join(STATIC_DIR, filename))
 
+@app.get("/static/originImg/{filename}")
+async def get_origin_img(filename: str):
+    return FileResponse(os.path.join(STATIC_DIR, 'originImg', filename))
 
-@app.get("/static/{file_name}")
-async def main(file_name: str):
-    return FileResponse(os.path.join(STATIC_DIR, file_name))
-
-@app.get("/static/originImg/{file_name}")
-async def main(file_name: str):
-    return FileResponse(os.path.join(STATIC_DIR, 'originImg', file_name))
-
-@app.get("/static/limeImg/{file_name}")
-async def main(file_name: str):
-    return FileResponse(os.path.join(STATIC_DIR, 'limeImg', file_name))
+@app.get("/static/limeImg/{filename}")
+async def get_lime_img(filename: str):
+    return FileResponse(os.path.join(STATIC_DIR, 'limeImg', filename))

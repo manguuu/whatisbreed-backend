@@ -4,24 +4,23 @@ from lime.wrappers.scikit_image import SegmentationAlgorithm
 import numpy as np
 import tensorflow as tf
 
-model = tf.keras.models.load_model('./assets/best_model.h5')
+model = tf.keras.models.load_model('./assets/MobileNetv3.h5')
 
 CLASSES = [
-    'beagle', 'cocker_spaniel', 'golden_retriever',
-    'maltese', 'pekinese', 'pomeranian', 'poodle',
-    'samoyed', 'shih_tzu', 'white_terrier']
+    'Beagle', 'Cocker spaniel', 'Golden retriever',
+    'Maltese', 'Pekinese', 'Pomeranian', 'Poodle',
+    'Samoyed', 'Shih_tzu', 'White terrier']
 
 def img_preprocess(img_path: str):
     img = tf.io.read_file(img_path)
     img = tf.io.decode_image(img, channels=3)
-    img = tf.image.resize(img, [299, 299])
+    img = tf.image.resize(img, [224, 224])
     img = tf.expand_dims(img, axis=0)
-    img = tf.keras.applications.xception.preprocess_input(img)
+    img = tf.keras.applications.mobilenet_v3.preprocess_input(img)
     return img.numpy()
 
 
 def explain_image(img: np.array, saved_filename: str):
-    # print('init')
     explainer = lime_image.LimeImageExplainer(verbose=1, random_state=1)
 
     segmenter = SegmentationAlgorithm(
@@ -32,10 +31,10 @@ def explain_image(img: np.array, saved_filename: str):
 
     explanation = explainer.explain_instance(
         img,
-        classifier_fn=model.predict,  # 10개 class 확률 반환
-        top_labels=2,  # 확률 기준 1위
-        num_samples=10,  # sample space
-        segmentation_fn=segmenter,  # 분할 알고리즘
+        classifier_fn=model.predict, 
+        top_labels=2, 
+        num_samples=10,  
+        segmentation_fn=segmenter, 
         num_features=100,
         random_seed=1)
 
