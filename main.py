@@ -1,7 +1,7 @@
 from datetime import datetime
 import secrets
-from fastapi import FastAPI, File, UploadFile, Request
-from fastapi.responses import HTMLResponse, FileResponse
+from fastapi import FastAPI, UploadFile, Request
+from fastapi.responses import FileResponse
 import os
 import aiofiles
 from fastapi.templating import Jinja2Templates
@@ -10,16 +10,21 @@ from ml import CLASSES, img_preprocess, explain_image, model
 
 app = FastAPI()
 
-BASE_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'backend')
+BASE_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'whatisbreed-backend')
 ORIGIN_IMG_DIR = os.path.join(BASE_DIR, 'static', 'originImg/')
 LIME_IMG_DIR = os.path.join(BASE_DIR, 'static', 'limeImg/')
 SERVER_IMG_DIR = os.path.join('http://localhost:8000/','static/','originImg/')
 STATIC_DIR = os.path.join(BASE_DIR, 'static')
+DIST_DIR = os.path.join(BASE_DIR, 'dist')
 
-
-app.mount('/static', StaticFiles(directory='static'), name='static')
+templates = Jinja2Templates(directory="dist")
+app.mount('/', StaticFiles(directory='dist'), name='dist')
 app = FastAPI()
 
+
+@app.get("/")
+def serve_home(request: Request):
+    return templates.TemplateResponse("index.html", context={"request": request})
 
 # return: "[Date][random str].png": str
 def get_filename() -> str:
@@ -38,7 +43,7 @@ async def post_file(file: UploadFile):
 
     return {'filename': filename}
 
-@app.get("/{filename}")
+@app.get("/predict/{filename}")
 async def predict(filename: str):
     lime_file_path = os.path.join(LIME_IMG_DIR, filename)
     filename = os.path.join(ORIGIN_IMG_DIR, filename)
@@ -60,3 +65,11 @@ async def get_origin_img(filename: str):
 @app.get("/static/limeImg/{filename}")
 async def get_lime_img(filename: str):
     return FileResponse(os.path.join(STATIC_DIR, 'limeImg', filename))
+
+@app.get("/{filename}")
+async def get_dist(filename: str):
+    return FileResponse(os.path.join(DIST_DIR, filename))
+
+@app.get("/assets/{filename}")
+async def get_dist_assets(filename: str):
+    return FileResponse(os.path.join(DIST_DIR, "assets", filename))
