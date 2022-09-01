@@ -34,4 +34,7 @@ RUN echo "syntax on\\nfiletype indent plugin on\\nlet python_version_2=1\\nlet p
 
 RUN sudo chsh -s $(which zsh)
 
+RUN git clone https://github.com/manguuu/whatisbreed-backend
+RUN git clone https://github.com/manguuu/whatisbreed-frontend
+
 EXPOSE 80
