@@ -19,11 +19,16 @@
 
 ## ⚙️ Project Setup
 
-### clone back & front repo
+### Docker image Pull & Run
+```sh
+docker pull alsrb4298/whatisbreed
+docker run -it -p 80:80 -p 443:443 --name whatisbreed alsrb4298/whatisbreed
+```
+
+### Clone back & front repo
 ```sh
 git clone https://github.com/manguuu/whatisbreed-backend
 git clone https://github.com/manguuu/whatisbreed-frontend
-
 ```
 
 ### Install & build frontend code
@@ -37,5 +42,5 @@ mv dist ../whatisbreed-backend/dist
 ### Run backend code
 ```sh
 cd whatisbreed-backend
-uvicorn main:app
+uvicorn main:app --port 8000 --log-config log.ini
 ```
