@@ -8,10 +8,8 @@ ENV LC_CTYPE C.UTF-8
 
 WORKDIR /root
 
-RUN apt-get update && apt-get install -y netcat
-
 RUN apt update
-RUN apt install python git curl wget vim zsh python3 python3-pip  net-tools nginx -y
+RUN apt install python git curl wget vim zsh python3 python3-pip net-tools nginx sudo -y
 RUN python3 -m pip install --upgrade pip
 
 RUN pip install lime
@@ -33,6 +31,9 @@ RUN sudo chsh -s $(which zsh)
 
 RUN git clone https://github.com/manguuu/whatisbreed-backend
 RUN git clone https://github.com/manguuu/whatisbreed-frontend
+
+RUN curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+RUN apt install nodejs
 
 EXPOSE 80
 EXPOSE 443

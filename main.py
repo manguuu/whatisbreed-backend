@@ -53,7 +53,7 @@ async def predict(filename: str) -> dict:
     pred = {label: prob for label, prob in zip(CLASSES, pred)}
     explain_image(img[0], lime_file_path)
     print("limefilepath=", lime_file_path)
-    return {'pred': pred};
+    return {'pred': pred}
 
 @app.get("/static/{filename}")
 async def get_static_file(filename: str) -> FileResponse:
