@@ -20,11 +20,8 @@ RUN pip install "fastapi[all]"
 
 RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
-RUN wget -O /root/.gdbinit-gef.py -q https://github.com/hugsy/gef/raw/master/gef.py
-RUN echo source /root/.gdbinit-gef.py >> ~/.gdbinit
-
-RUN git clone https://github.com/zsh-users/zsh-syntax-highlighting.git
-RUN echo "source ./zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >> ~/.zshrc
+RUN git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.zsh/zsh-syntax-highlighting
+RUN echo "source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >> ~/.zshrc
 
 RUN git clone https://github.com/zsh-users/zsh-autosuggestions ~/.zsh/zsh-autosuggestions
 RUN echo "source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh" >> ~/.zshrc
@@ -38,3 +35,4 @@ RUN git clone https://github.com/manguuu/whatisbreed-backend
 RUN git clone https://github.com/manguuu/whatisbreed-frontend
 
 EXPOSE 80
+EXPOSE 443

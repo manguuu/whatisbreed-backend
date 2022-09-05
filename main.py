@@ -7,11 +7,21 @@ import aiofiles
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from ml import CLASSES, img_preprocess, explain_image, model
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
 templates = Jinja2Templates(directory="dist")
 app.mount('/dist', StaticFiles(directory='dist'), name='dist')
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 @app.get("/")
 def serve_home(request: Request):
