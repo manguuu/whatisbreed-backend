@@ -1,0 +1,6 @@
+lime
+aiofiles
+fastapi
+uvicorn
+Jinja2
+python-multipart
