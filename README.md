@@ -22,5 +22,5 @@
 ### Docker image Pull & Run
 ```sh
 docker pull alsrb4298/whatisbreed
-docker run -it -p 8000 alsrb4298/whatisbreed
+docker run -it -p 8000:8000 alsrb4298/whatisbreed
 ```
